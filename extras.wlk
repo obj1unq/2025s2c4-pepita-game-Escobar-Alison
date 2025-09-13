@@ -7,13 +7,18 @@ object nido{
     method image() = "nido.png"
 
 }
-object silvestre {
+
+object silvestre{
   const presa = pepita
 
   method image() = "silvestre.png"
 
-  method position() = game.at(self.x(), 0)
+  method position() = game.at(self.x(), 0) //cada vez recalcula
 
-  method x() = presa.position().x().max(3)
+  method x() = 3.max(presa.position().x()) 
+}
 
+object muro {
+  var property position = game.at(4, 4)
+  method image() = "muro.png"
 }

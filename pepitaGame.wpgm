@@ -1,16 +1,42 @@
 import wollok.game.*
 import pepita.*
+import extras.*
+import comidas.*
+import direcciones.*
+
+//Framework INVERSIÓN DE CONTROL
+//Library = Biblioteca
+//Modelo.
+//BLOQUES
 
 program pepitaGame {
 	game.title("Pepita") 	//Valor por defecto "Wollok Game"
 	game.height(10) 		//valor por defecto 5
 	game.width(10) 			//valor por defecto 5
 	game.cellSize(50) 		//valor por defecto 50
-	//search assets in assets folder, for example, for the background
+	
+	//busca las imagenes en la carpeta assets
+	
 	//Valor por defecto 
 	game.boardGround("fondo2.jpg")
+	//game.ground("suelo.png")
 	
-	game.addVisual(pepita) 
+	game.addVisual(nido)
+	game.addVisual(silvestre)
+	game.addVisual(alpiste)
+	game.addVisual(manzana)
+
+	game.addVisual(pepita)
+
+	keyboard.up().onPressDo( { pepita.mover(arriba) } )
+	keyboard.down().onPressDo( { pepita.mover(abajo) } )
+	keyboard.left().onPressDo( { pepita.mover(izquierda) } )
+	keyboard.right().onPressDo( { pepita.mover(derecha) } )
+	keyboard.c().onPressDo( { pepita.comerAca() } )
 	
-	game.start()	
+
+	//EL orden de agregar visuales IMPORTA! Siempre, el último, está encima.
+	//game.addVisual(pepita)
+
+	game.start()
 }
