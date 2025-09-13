@@ -3,40 +3,30 @@ import pepita.*
 import extras.*
 import comidas.*
 import direcciones.*
+import niveles.*
 
-//Framework INVERSIÓN DE CONTROL
+
+/*FRAMEWORK
+espera que se respete el contrato 
+ INVERSIÓN DE CONTROL
+Marca la estructura y nos da puntos de extensión. 
+El framework tiene el control y nos “llama” a nosotros.
+*/
 //Library = Biblioteca
-//Modelo.
-//BLOQUES
+
+//Modelo
+//BLOQUES: Crea acciones que se ejecutan más tarde
 
 program pepitaGame {
-	game.title("Pepita") 	//Valor por defecto "Wollok Game"
-	game.height(10) 		//valor por defecto 5
-	game.width(10) 			//valor por defecto 5
-	game.cellSize(50) 		//valor por defecto 50
+	game.title("Pepita") 	//Default "Wollok Game"
+	game.height(10) 		//Default 5
+	game.width(10) 			//Default 5
+	game.cellSize(50) 		//Default 50
 	
 	//busca las imagenes en la carpeta assets
+	game.boardGround("fondo2.jpg")  //otra froma es, con diferencias, game.ground("suelo.png")
+
+    nivel1.inicializar()
 	
-	//Valor por defecto 
-	game.boardGround("fondo2.jpg")
-	//game.ground("suelo.png")
-	
-	game.addVisual(nido)
-	game.addVisual(silvestre)
-	game.addVisual(alpiste)
-	game.addVisual(manzana)
-
-	game.addVisual(pepita)
-
-	keyboard.up().onPressDo( { pepita.mover(arriba) } )
-	keyboard.down().onPressDo( { pepita.mover(abajo) } )
-	keyboard.left().onPressDo( { pepita.mover(izquierda) } )
-	keyboard.right().onPressDo( { pepita.mover(derecha) } )
-	keyboard.c().onPressDo( { pepita.comerAca() } )
-	
-
-	//EL orden de agregar visuales IMPORTA! Siempre, el último, está encima.
-	//game.addVisual(pepita)
-
 	game.start()
 }

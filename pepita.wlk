@@ -1,3 +1,4 @@
+import niveles.*
 
 
 import extras.*
@@ -5,35 +6,51 @@ import comidas.*
 import wollok.game.*
 
 object pepita {
-	var property position = game.at(0,1) //arranca en la celda (0,1)
-	var energia = 100
+	const positionInicial = game.at(0,1)    //arranca en la celda (0,1)
+	var property position = positionInicial
+	const energiaInicial = 100
+	var energia = energiaInicial
     const predador = silvestre
     const hogar = nido
 	const joules = 9
 
-	//method image() = "pepita-base.png"
 	method image(){
         return "pepita-" + self.estado() + ".png"
     }
 
 	method estado(){
-		//(self.esAtrapada() or not self.conEnergia()){ "gris" }
+		//        (self.esAtrapada() OR NOT self.conEnergia()){ "gris" }
 		return if (self.esAtrapada() || !self.puedeMover()){ "gris" }
 		    	else if (self.enHogar()){ "grande"  }
 				else { "base" }
 	}
 
-	method loQueHayAca() = game.uniqueCollider(self)
+	method loQueHayAca() = game.uniqueCollider(self) //Devuelve el único objeto que está en la misma posición que el objeto dado
+
+    method tratoDeComer(){
+		try {
+			const comida = self.loQueHayAca() //operacion parcial
+		    self.comer(comida)
+		    comida.andate()
+		} 
+		catch e1: Exception {
+			self.error("No hay nada para comer acá")
+		}
+	}
 
 	method comerAca(){
-		const comida = self.loQueHayAca()
-		self.comer(comida)
-		comida.andate()
+		//La exception creada es ideal para cuando no hay nada, pero no si esta silvestre 
+        try {
+            self.tratoDeComer()
+		} 
+		catch e2: Exception {
+			game.say(self, "no hay nada que comer") //
+		}
 	}
 	
 	method puedeMover() = energia >= self.energiaNecesaria(1) && not self.esAtrapada()
 
-	method esAtrapada() = self.estaSobre(predador)
+	method esAtrapada() = self.estaSobre(predador) //
 
 	method enHogar() = self.estaSobre(hogar)
 
@@ -50,10 +67,7 @@ object pepita {
 	method energiaNecesaria(kms) = joules * kms
 
 	method volar(kms) {
-		//energia = energia - 9 * kms
-		//energia -= 9 * kms
 		energia -= self.energiaNecesaria(kms) 
-		//energia = energia - self.energiaNecesaria(kms)
 	}
 
     method mover(direccion){
@@ -66,8 +80,19 @@ object pepita {
 	}
 
 	method perder(){
-		game.say(self, "Perdí!")
+		game.say(self, "Perdiste")
+		keyboard.r().onPressDo {
+            game.clear()
+			nivel1.inicializar()
+            self.inicializar()
+		}
+
 		game.schedule( 2000, { game.stop() })
+	}
+
+	method inicializar() {
+	  position = positionInicial
+	  energia  = energiaInicial
 	}
 
 	method energia() {

@@ -13,7 +13,6 @@ object manzana {
 	
 	method madurar() {
 		madurez = madurez + 1
-		//madurez += 1
 	}
 
 	method andate(){
@@ -23,7 +22,7 @@ object manzana {
 }
 
 object alpiste {
-	var property position = game.at(7,3)
+	var property position = game.at(7,5)
 
 	method image() = "alpiste.png"
 
