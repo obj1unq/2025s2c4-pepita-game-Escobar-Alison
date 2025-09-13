@@ -14,6 +14,10 @@ object pepita {
     const hogar = nido
 	const joules = 9
 
+	method encontraste(algo) {
+	  algo.queHagoConVos(self) // para delegarle la reponsabilidad de comer o otra cosa, la haga el otro obj
+	}
+	
 	method image(){
         return "pepita-" + self.estado() + ".png"
     }
@@ -38,14 +42,9 @@ object pepita {
 		}
 	}
 
-	method comerAca(){
-		//La exception creada es ideal para cuando no hay nada, pero no si esta silvestre 
-        try {
-            self.tratoDeComer()
-		} 
-		catch e2: Exception {
-			game.say(self, "no hay nada que comer") //
-		}
+	method comerAca(){ //
+        self.tratoDeComer()
+		game.say(self, "no hay nada que comer") //
 	}
 	
 	method puedeMover() = energia >= self.energiaNecesaria(1) && not self.esAtrapada()

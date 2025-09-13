@@ -20,8 +20,13 @@ object nivel1 {
 	    keyboard.down().onPressDo( { pepita.mover(abajo) } )
 	    keyboard.left().onPressDo( { pepita.mover(izquierda) } )
 	    keyboard.right().onPressDo( { pepita.mover(derecha) } )
-	    keyboard.c().onPressDo( { pepita.comerAca() } )
+	    //keyboard.c().onPressDo( { pepita.comerAca() } )
                     //Agrega un bloque que se ejecutará siempre que se presione self.
-        game.onCollideDo(pepita, {  }) //colision
+
+        
+        /* COLISION
+        game.onCollideDo(pepita, { algo => pepita.encontraste(algo) }) 
+        cuando en una interacción entre objetos
+        */
 	}
 }
