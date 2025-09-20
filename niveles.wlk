@@ -18,9 +18,9 @@ object nivel1 {
 		keyboard.left().onPressDo { pepita.mover(izquierda) }
 		keyboard.right().onPressDo { pepita.mover(derecha) }
 		
-		//game.onTick(800) { pepita.caer() } // Tick para que Pepita caiga
-        
-		game.onCollideDo(pepita, { algo => pepita.sobreAlguien() })
+		game.onTick(800, "caer", { pepita.caer() })
+
+		game.onCollideDo(pepita, { algo => pepita.chocarCon(algo) })
 	}
 }
 
@@ -35,6 +35,6 @@ object admin {
 	}
 
 	method ganar() {
-		game.stop()
+		game.schedule( 2000, { game.stop() })
 	}
 }

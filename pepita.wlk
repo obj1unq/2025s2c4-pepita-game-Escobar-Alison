@@ -34,15 +34,23 @@ object pepita {
 
 	method estaSobre(alguien) = position == alguien.position() 
 
-	// --- Movimientos ---
+// --- Movimientos ---
 	method puedeVolar() = energia >= self.energiaNecesaria(1) && not self.atrapada()
-
 	method energiaNecesaria(kms) = joules * kms
+    
+	method puedeMover(sigPosicion) = self.dentroDelTablero(sigPosicion) && !self.chocarUnMuro(sigPosicion)
+
+    method dentroDelTablero(sigPosicion) =
+		sigPosicion.x() >= 0 && sigPosicion.x() < game.width() &&
+        sigPosicion.y() >= 0 && sigPosicion.y() < game.height()
+	
+    method chocarUnMuro(sigPosicion) = sigPosicion == muro.position()
 
 	method mover(direccion){
-		if(self.puedeVolar()){
+		const sigPosicion = direccion.siguiente(position)
+		if(self.puedeVolar() && self.puedeMover(sigPosicion)){
 			self.volar(1)
-			position = direccion.siguiente(position)
+			position = sigPosicion
 		} else {
 			self.perdi()
 		}
@@ -55,15 +63,21 @@ object pepita {
 	method energia() {
 		return energia
 	}
-	
-	// Caer sin gastar energía
+
+	method teAtraparon() {
+		self.atrapada(true)
+		game.say(self, "Me atraparon!")
+		self.perdi()
+	}
+
+// Caer sin gastar energía
 	method caer() {
 		if(not atrapada) {
 			position = position.down(1)
 		}
 	}
 
-//-----------Comer-------------
+// --- Comer ---
 
 	method comerAca() {
 		const comida = self.loQueHayAca()
@@ -73,18 +87,15 @@ object pepita {
 	
 	method loQueHayAca() = game.uniqueCollider(self) //Devuelve el único objeto que está en la misma posición que el objeto dado (pepita)
 	
-	method teAtraparon() {
-		self.atrapada(true)
-		game.say(self, "Me atraparon!")
-		self.perdi()
+	method comer(comida) {
+		energia = energia + comida.energiaQueOtorga()
 	}
 
-    method sobreAlguien(){
-		
+    method chocarCon(algo){
+		algo.chocarConPepita(self)
 	}
 
 
-//////////////////////////////////////////////////////////////////////////////////////
 	method perdi(){
 		admin.perder()
 	}
@@ -94,7 +105,13 @@ object pepita {
 		energia = energiaInicial
 		atrapada = false
 	}
-//////////////////////////////////////////////////////////////////////////////////////
+
+	method game() {
+	  if (self.image() == "pepita-grande.png") {
+		game.say(self, "GANE")
+		admin.ganar()
+	  }
+	}
 	
 	method redibujarse(){     //Esto no se usa
 	  game.removeVisual(self)

@@ -13,25 +13,33 @@ object manzana {
 	
 	method madurar() {
 		madurez = madurez + 1
+		//madurez += 1
 	}
 
 	method andate(){
 		game.removeVisual(self)
 	}
 
+	method chocarConPepita(unaPepita) {
+		unaPepita.comerAca()
+	}
 }
 
 object alpiste {
-	var property position = game.at(7,5)
+	var property position = game.at(7,3)
 
 	method image() = "alpiste.png"
 
 	method energiaQueOtorga() {
-		return 20
+		return 100
 	} 
 
 	method andate(){
 		game.removeVisual(self)
+	}
+
+	method chocarConPepita(unaPepita) {
+		unaPepita.comerAca()
 	}
 
 }
