@@ -1,105 +1,102 @@
-import niveles.*
-
-
 import extras.*
 import comidas.*
+import niveles.*
 import wollok.game.*
 
 object pepita {
-	const positionInicial = game.at(0,1)    //arranca en la celda (0,1)
-	var property position = positionInicial
+	const posicionInicial = game.at(0,1)
 	const energiaInicial = 100
+
+	var property position = posicionInicial
 	var energia = energiaInicial
-    const predador = silvestre
-    const hogar = nido
+
+	const property predador = silvestre
+	const hogar = nido
 	const joules = 9
+	var property atrapada = false
 
-	method encontraste(algo) {
-	  algo.queHagoConVos(self) // para delegarle la reponsabilidad de comer o otra cosa, la haga el otro obj
+	method text() = "Energia: \n" + energia
+	method textColor() = "FF0000"
+
+
+// --- Apariencia ---
+	method image() {
+		return "pepita-" + self.estado() + ".png"
 	}
 	
-	method image(){
-        return "pepita-" + self.estado() + ".png"
-    }
+	method estado() =
+		if (!self.puedeVolar()) { "gris" }
+		    else if (self.enHogar()) { "grande"  }
+			        else { "base" }
 
-	method estado(){
-		//        (self.esAtrapada() OR NOT self.conEnergia()){ "gris" }
-		return if (self.esAtrapada() || !self.puedeMover()){ "gris" }
-		    	else if (self.enHogar()){ "grande"  }
-				else { "base" }
-	}
-
-	method loQueHayAca() = game.uniqueCollider(self) //Devuelve el único objeto que está en la misma posición que el objeto dado
-
-    method tratoDeComer(){
-		try {
-			const comida = self.loQueHayAca() //operacion parcial
-		    self.comer(comida)
-		    comida.andate()
-		} 
-		catch e1: Exception {
-			self.error("No hay nada para comer acá")
-		}
-	}
-
-	method comerAca(){ //
-        self.tratoDeComer()
-		game.say(self, "no hay nada que comer") //
-	}
-	
-	method puedeMover() = energia >= self.energiaNecesaria(1) && not self.esAtrapada()
-
-	method esAtrapada() = self.estaSobre(predador) //
 
 	method enHogar() = self.estaSobre(hogar)
 
-	method estaSobre(alguien) = position == alguien.position()
-		
-	method text() = "Energia: \n" + energia
+	method estaSobre(alguien) = position == alguien.position() 
 
-	method textColor() = "FF0000"
-
-	method comer(comida) {
-		energia = energia + comida.energiaQueOtorga()
-	}
+	// --- Movimientos ---
+	method puedeVolar() = energia >= self.energiaNecesaria(1) && not self.atrapada()
 
 	method energiaNecesaria(kms) = joules * kms
+
+	method mover(direccion){
+		if(self.puedeVolar()){
+			self.volar(1)
+			position = direccion.siguiente(position)
+		} else {
+			self.perdi()
+		}
+	}
 
 	method volar(kms) {
 		energia -= self.energiaNecesaria(kms) 
 	}
 
-    method mover(direccion){
-		if(self.puedeMover()){
-			self.volar(1)
-			position = direccion.siguiente(position)
-		} else {
-			self.perder()
-		}
-	}
-
-	method perder(){
-		game.say(self, "Perdiste")
-		keyboard.r().onPressDo {
-            game.clear()
-			nivel1.inicializar()
-            self.inicializar()
-		}
-
-		game.schedule( 2000, { game.stop() })
-	}
-
-	method inicializar() {
-	  position = positionInicial
-	  energia  = energiaInicial
-	}
-
 	method energia() {
 		return energia
 	}
+	
+	// Caer sin gastar energía
+	method caer() {
+		if(not atrapada) {
+			position = position.down(1)
+		}
+	}
 
-	//Esto no se usa.
-	method redibujarse(){
+//-----------Comer-------------
+
+	method comerAca() {
+		const comida = self.loQueHayAca()
+		self.comer(comida)
+		comida.andate()
+	}
+	
+	method loQueHayAca() = game.uniqueCollider(self) //Devuelve el único objeto que está en la misma posición que el objeto dado (pepita)
+	
+	method teAtraparon() {
+		self.atrapada(true)
+		game.say(self, "Me atraparon!")
+		self.perdi()
+	}
+
+    method sobreAlguien(){
+		
+	}
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+	method perdi(){
+		admin.perder()
+	}
+	
+	method inicializar() {
+		position = posicionInicial
+		energia = energiaInicial
+		atrapada = false
+	}
+//////////////////////////////////////////////////////////////////////////////////////
+	
+	method redibujarse(){     //Esto no se usa
 	  game.removeVisual(self)
 	  game.addVisual(self)
 	}

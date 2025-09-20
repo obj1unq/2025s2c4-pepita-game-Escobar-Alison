@@ -26,7 +26,7 @@ program pepitaGame {
 	//busca las imagenes en la carpeta assets
 	game.boardGround("fondo2.jpg")  //otra froma es, con diferencias, game.ground("suelo.png")
 
-    nivel1.inicializar()
-	
+	nivel1.inicializar()	
+
 	game.start()
 }
